@@ -16,10 +16,7 @@ from qutip import identity, ket, sigmam, sigmap, sigmax, sigmay, sigmaz, tensor
 import krotov
 
 
-try:
-    import qutip.qip.gates as qutip_gates
-except ImportError:
-    import qutip.qip.operations.gates as qutip_gates
+import qutip.core.gates as qutip_gates
 
 
 @pytest.fixture
@@ -538,10 +535,10 @@ def test_gate_objectives_16states(two_qubit_liouvillian):
 def test_transmon_3states_objectives():
     L = qutip.Qobj()  # dummy Liouvillian (won't be used)
     n_qubit = 3
-    ket00 = qutip.ket((0, 0), dim=(n_qubit, n_qubit))
-    ket01 = qutip.ket((0, 1), dim=(n_qubit, n_qubit))
-    ket10 = qutip.ket((1, 0), dim=(n_qubit, n_qubit))
-    ket11 = qutip.ket((1, 1), dim=(n_qubit, n_qubit))
+    ket00 = qutip.ket((0, 0), dim=[n_qubit, n_qubit])
+    ket01 = qutip.ket((0, 1), dim=[n_qubit, n_qubit])
+    ket10 = qutip.ket((1, 0), dim=[n_qubit, n_qubit])
+    ket11 = qutip.ket((1, 1), dim=[n_qubit, n_qubit])
     basis = [ket00, ket01, ket10, ket11]
     weights = [20, 1, 1]
     objectives = krotov.gate_objectives(
