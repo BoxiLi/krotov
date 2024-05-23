@@ -68,9 +68,7 @@ import numpy as np
 import qutip
 import scipy
 import threadpoolctl
-from qutip.cy.spconvert import dense2D_to_fastcsr_fmode
-from qutip.cy.spmatfuncs import spmvpy_csr
-from qutip.superoperator import mat2vec, vec2mat
+from qutip.core.superoperator import stack_columns, unstack_columns
 
 
 __all__ = ['expm', 'Propagator', 'DensityMatrixODEPropagator']
@@ -252,11 +250,10 @@ class DensityMatrixODEPropagator(Propagator):
         self._r.integrate(self._t)
         self._y = self._r.y
         return qutip.Qobj(
-            dense2D_to_fastcsr_fmode(
-                vec2mat(self._y), state.shape[0], state.shape[1]
-            ),
+            unstack_columns(self._y),
             dims=state.dims,
             isherm=True,
+            dtype="csr"
         )
 
     @staticmethod
@@ -266,11 +263,11 @@ class DensityMatrixODEPropagator(Propagator):
         out = np.zeros(rho.shape[0], dtype=complex)
         L = L_list[0][0]
         L_coeff = L_list[0][1]
-        spmvpy_csr(L.data, L.indices, L.indptr, rho, L_coeff, out)
+        out = L @ out
         for n in range(1, len(L_list)):
             L = L_list[n][0]
             L_coeff = L_list[n][1]
-            spmvpy_csr(L.data, L.indices, L.indptr, rho, L_coeff, out)
+            out = L @ out
         return out
 
     def _initialize(self, L, rho, dt, c_ops, backwards):
@@ -304,7 +301,7 @@ class DensityMatrixODEPropagator(Propagator):
         self._L_list = L_list
         self._control_indices = control_indices
         if rho.type == 'oper':
-            self._y = mat2vec(rho.full()).ravel('F')  # initial state
+            self._y = unstack_columns(rho.full()).ravel('F')  # initial state
         else:
             raise ValueError("rho must be a density matrix")
 
