@@ -65,6 +65,7 @@ the optimization to disk, as a side effect. This is achieved by the routine
 protects against losing the results of a long running optimization in the event
 of a crash.
 """
+
 from operator import xor
 
 import glom

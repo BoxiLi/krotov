@@ -52,6 +52,7 @@ The values for $J_T$ may be used in a convergence analysis, see
 
 .. _Wirtinger derivative: https://en.wikipedia.org/wiki/Wirtinger_derivatives
 """
+
 import logging
 
 import numpy as np
@@ -124,7 +125,7 @@ def f_tau(fw_states_T, objectives, tau_vals=None, **kwargs):
             for (psi, obj) in zip(fw_states_T, objectives)
         ]
     res = 0j
-    for (obj, τ) in zip(objectives, tau_vals):
+    for obj, τ in zip(objectives, tau_vals):
         if τ is None:
             logger = logging.getLogger('krotov')
             logger.warning("τ is None in f_tau")
@@ -187,7 +188,7 @@ def chis_ss(fw_states_T, objectives, tau_vals):
     """
     N = len(objectives)
     res = []
-    for (obj, τ) in zip(objectives, tau_vals):
+    for obj, τ in zip(objectives, tau_vals):
         # `obj.target` is assumed to be the "target state" (gate applied to
         # `initial_state`)
         if hasattr(obj, 'weight'):
@@ -235,7 +236,7 @@ def chis_sm(fw_states_T, objectives, tau_vals):
     given, the weights should generally sum to $N$.
     """
     sum_of_w_tau = 0
-    for (obj, τ) in zip(objectives, tau_vals):
+    for obj, τ in zip(objectives, tau_vals):
         if hasattr(obj, 'weight'):
             sum_of_w_tau += obj.weight * τ
         else:
@@ -375,7 +376,7 @@ def J_T_hs(fw_states_T, objectives, tau_vals=None, **kwargs):
     hs = 'l2'  # qutip's name for HS-norm for state vectors
     if fw_states_T[0].type == 'oper':
         hs = 'fro'  # qutip's name for HS-norm for density matrices
-    for (obj, ρ, τ) in zip(objectives, fw_states_T, tau_vals):
+    for obj, ρ, τ in zip(objectives, fw_states_T, tau_vals):
         ρ_tgt = obj.target
         if hasattr(obj, 'weight'):
             res += obj.weight * (
@@ -427,7 +428,7 @@ def chis_hs(fw_states_T, objectives, tau_vals):
     """
     c = 1.0 / (2 * len(objectives))
     res = []
-    for (obj, ρ) in zip(objectives, fw_states_T):
+    for obj, ρ in zip(objectives, fw_states_T):
         ρ_tgt = obj.target
         if hasattr(obj, 'weight'):
             w = obj.weight

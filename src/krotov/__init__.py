@@ -11,6 +11,7 @@ functionals, convergence checks, analysis tools, and propagators, as well as
 more technical routines for parallelization, low-level data conversion, and
 estimators for second-order updates.
 """
+
 # fmt: off
 
 __version__ = '1.3.0+dev'

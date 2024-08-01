@@ -62,15 +62,14 @@ general, any stateful `propagator` should be an instance of
 
 .. _Cython: https://cython.org
 """
+
 from abc import ABC, abstractmethod
 
 import numpy as np
 import qutip
 import scipy
 import threadpoolctl
-from qutip.cy.spconvert import dense2D_to_fastcsr_fmode
-from qutip.cy.spmatfuncs import spmvpy_csr
-from qutip.superoperator import mat2vec, vec2mat
+from qutip.core.superoperator import stack_columns, unstack_columns
 
 
 __all__ = ['expm', 'Propagator', 'DensityMatrixODEPropagator']
@@ -252,9 +251,7 @@ class DensityMatrixODEPropagator(Propagator):
         self._r.integrate(self._t)
         self._y = self._r.y
         return qutip.Qobj(
-            dense2D_to_fastcsr_fmode(
-                vec2mat(self._y), state.shape[0], state.shape[1]
-            ),
+            unstack_columns(self._y),
             dims=state.dims,
             isherm=True,
         )
@@ -263,15 +260,15 @@ class DensityMatrixODEPropagator(Propagator):
     def _rhs(t, rho, L_list):
         # _rhs being a staticmethod enables the propagator to be pickled (for
         # parallelization)
-        out = np.zeros(rho.shape[0], dtype=complex)
         L = L_list[0][0]
         L_coeff = L_list[0][1]
-        spmvpy_csr(L.data, L.indices, L.indptr, rho, L_coeff, out)
+        rho = qutip.data.Dense(rho, copy=False)
+        out = qutip.data.matmul(L, rho, scale=L_coeff)
         for n in range(1, len(L_list)):
             L = L_list[n][0]
             L_coeff = L_list[n][1]
-            spmvpy_csr(L.data, L.indices, L.indptr, rho, L_coeff, out)
-        return out
+            out += qutip.data.matmul(L, rho, scale=L_coeff)
+        return out.as_ndarray()
 
     def _initialize(self, L, rho, dt, c_ops, backwards):
         self._initialize_data(L, rho, dt, c_ops, backwards)
@@ -283,7 +280,7 @@ class DensityMatrixODEPropagator(Propagator):
         if not (c_ops is None or len(c_ops) == 0):
             # in principle, we could convert c_ops to a Lindbladian, here
             raise NotImplementedError("c_ops not implemented")
-        for (i, spec) in enumerate(L):
+        for i, spec in enumerate(L):
             if isinstance(spec, qutip.Qobj):
                 l_op = spec
                 l_coeff = 1
@@ -303,8 +300,9 @@ class DensityMatrixODEPropagator(Propagator):
                 )
         self._L_list = L_list
         self._control_indices = control_indices
+
         if rho.type == 'oper':
-            self._y = mat2vec(rho.full()).ravel('F')  # initial state
+            self._y = stack_columns(rho.full()).ravel('F')  # initial state
         else:
             raise ValueError("rho must be a density matrix")
 

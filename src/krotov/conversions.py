@@ -7,6 +7,7 @@ time discretization of control fields, and in particular converting between a
 discretization defined on the *points* of the time grid ("controls") and
 piecewise-constant "pulses" defined on the *intervals* of the time grid.
 """
+
 import copy
 import logging
 import warnings
@@ -321,7 +322,7 @@ def plug_in_pulse_values(H, pulses, mapping, time_index, conjugate=False):
             ['X', ['X', 10], ['Y', 10], ['Z', 20]]
     """
     H = _nested_list_shallow_copy(H)
-    for (pulse, pulse_mapping) in zip(pulses, mapping):
+    for pulse, pulse_mapping in zip(pulses, mapping):
         for i in pulse_mapping:
             if conjugate:
                 H[i][1] = np.conjugate(pulse[time_index])

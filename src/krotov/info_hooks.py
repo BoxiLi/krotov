@@ -1,4 +1,5 @@
 """Routines that can be passed as `info_hook` to :func:`.optimize_pulses`"""
+
 import sys
 import time
 
@@ -169,10 +170,10 @@ def print_debug_information(
     out.write("Iteration %d\n" % iteration)
     if iteration == 0:
         out.write("    objectives:\n")
-        for (i, obj) in enumerate(objectives):
+        for i, obj in enumerate(objectives):
             out.write("        %d:%s\n" % (i + 1, obj))
         out.write("    adjoint objectives:\n")
-        for (i, obj) in enumerate(adjoint_objectives):
+        for i, obj in enumerate(adjoint_objectives):
             out.write("        %d:%s\n" % (i + 1, obj))
         try:
             if isinstance(propagator, (list, tuple)):

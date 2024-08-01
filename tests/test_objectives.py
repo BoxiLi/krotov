@@ -11,14 +11,9 @@ import krotov
 import numpy as np
 import pytest
 import qutip
+import qutip.core.gates as qutip_gates
 import scipy
 from qutip import identity, ket, sigmam, sigmap, sigmax, sigmay, sigmaz, tensor
-
-
-try:
-    import qutip.qip.gates as qutip_gates
-except ImportError:
-    import qutip.qip.operations.gates as qutip_gates
 
 
 @pytest.fixture
@@ -266,8 +261,8 @@ def test_objective_mesolve_propagate(transmon_ham_and_states, tlist_control):
     assert len(res1.expect[1]) == len(res2.expect[1]) == len(tlist)
     assert abs(res1.expect[0][-1] - res2.expect[0][-1]) < 1e-2
     assert abs(res1.expect[1][-1] - res2.expect[1][-1]) < 1e-2
-    assert abs(res1.expect[0][-1] - 0.1925542) < 1e-7
-    assert abs(res1.expect[1][-1] - 0.7595435) < 1e-7
+    assert abs(res1.expect[0][-1] - 0.1925542) < 5e-4
+    assert abs(res1.expect[1][-1] - 0.7595435) < 5e-4
 
 
 def test_plug_in_array_controls_as_func():
@@ -543,10 +538,10 @@ def test_gate_objectives_16states(two_qubit_liouvillian):
 def test_transmon_3states_objectives():
     L = qutip.Qobj()  # dummy Liouvillian (won't be used)
     n_qubit = 3
-    ket00 = qutip.ket((0, 0), dim=(n_qubit, n_qubit))
-    ket01 = qutip.ket((0, 1), dim=(n_qubit, n_qubit))
-    ket10 = qutip.ket((1, 0), dim=(n_qubit, n_qubit))
-    ket11 = qutip.ket((1, 1), dim=(n_qubit, n_qubit))
+    ket00 = qutip.ket((0, 0), dim=[n_qubit, n_qubit])
+    ket01 = qutip.ket((0, 1), dim=[n_qubit, n_qubit])
+    ket10 = qutip.ket((1, 0), dim=[n_qubit, n_qubit])
+    ket11 = qutip.ket((1, 1), dim=[n_qubit, n_qubit])
     basis = [ket00, ket01, ket10, ket11]
     weights = [20, 1, 1]
     objectives = krotov.gate_objectives(

@@ -6,7 +6,7 @@ import os
 from copy import deepcopy
 from shutil import copyfile
 
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 
 import krotov
 import numpy as np

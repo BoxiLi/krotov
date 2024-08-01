@@ -96,12 +96,13 @@ particular environment.
 
 .. _ipyparallel: https://ipyparallel.readthedocs.io/en/latest/
 """
+
 import contextlib
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 
-from qutip.parallel import serial_map
+from qutip import serial_map
 from qutip.ui.progressbar import BaseProgressBar, TextProgressBar
 from threadpoolctl import threadpool_limits
 
@@ -257,11 +258,10 @@ def parallel_map(
         num_cpus = multiprocessing.cpu_count()
 
     if progress_bar is None:
-        progress_bar = BaseProgressBar()
+        progress_bar = BaseProgressBar(len(values))
     if progress_bar is True:
-        progress_bar = TextProgressBar()
+        progress_bar = TextProgressBar(len(values))
 
-    progress_bar.start(len(values))
     nfinished = [0]
 
     def _update_progress_bar(x):
@@ -408,10 +408,10 @@ class FwPropStepTask:
         time_index = self.time_index
         pulse_vals = self.pulse_vals
         i_state = self.i_state
-        for (pulse, pulse_val) in zip(pulses, pulse_vals):
+        for pulse, pulse_val in zip(pulses, pulse_vals):
             pulse[time_index] = pulse_val
 
-        for (pulse, pulse_val) in zip(pulses, pulse_vals):
+        for pulse, pulse_val in zip(pulses, pulse_vals):
             pulse[time_index] = pulse_val
         state = states[i_state]
         mapping = pulses_mapping[i_state]
@@ -585,7 +585,7 @@ def _pmfw_forward_prop_step(pulse_vals, time_index):
         _threadpool_limits = threadpool_limits
     i_state = _pmfw_data['state_index']
     pulses = _pmfw_data['pulses']
-    for (pulse, pulse_val) in zip(pulses, pulse_vals):
+    for pulse, pulse_val in zip(pulses, pulse_vals):
         pulse[time_index] = pulse_val
     mapping = _pmfw_data['pulses_mapping'][i_state]
     obj = _pmfw_data['objective']

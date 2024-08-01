@@ -1,4 +1,5 @@
 """Support functions for the second-order update equation"""
+
 from abc import ABC, abstractmethod
 from typing import Optional
 

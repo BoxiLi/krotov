@@ -1,6 +1,7 @@
 """Module defining the :class:`Result` object that is returned by
 :func:`.optimize_pulses`.
 """
+
 import copyreg
 import logging
 import pickle
@@ -167,7 +168,7 @@ class Result:
             except TypeError:
                 pass  # control is not a numpy array (but maybe a callable)
         objectives = []
-        for (i, obj) in enumerate(self.objectives):
+        for i, obj in enumerate(self.objectives):
             H = _plug_in_optimized_controls(
                 obj.H, controls, self.controls_mapping[i][0]
             )
@@ -272,7 +273,7 @@ def _contains_control_placeholders(lst):
 def _plug_in_optimized_controls(H, controls, mapping):
     """Auxilliary routine to :attr:`Result.optimized_objectives`"""
     H = _nested_list_shallow_copy(H)
-    for (control, control_mapping) in zip(controls, mapping):
+    for control, control_mapping in zip(controls, mapping):
         for i in control_mapping:
             H[i][1] = control
     return H
