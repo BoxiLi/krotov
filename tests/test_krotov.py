@@ -6,11 +6,12 @@ import os
 from copy import deepcopy
 from shutil import copyfile
 
+from packaging.version import parse as parse_version
+
 import krotov
 import numpy as np
 import pytest
 import qutip
-from packaging.version import parse as parse_version
 
 
 def test_valid_version():

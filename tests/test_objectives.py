@@ -11,13 +11,9 @@ import krotov
 import numpy as np
 import pytest
 import qutip
+import qutip.core.gates as qutip_gates
 import scipy
 from qutip import identity, ket, sigmam, sigmap, sigmax, sigmay, sigmaz, tensor
-
-try:
-    import qutip.core.gates as qutip_gates  # qutip5
-except ImportError:
-    import qutip.qip.operations.gates as qutip_gates  # qutip4
 
 
 @pytest.fixture

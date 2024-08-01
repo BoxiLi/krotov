@@ -8,6 +8,7 @@ import pytest
 import qutip
 from qutip import ket
 
+
 try:
     import qutip.core.gates as qutip_gates  # qutip5
 except ImportError:

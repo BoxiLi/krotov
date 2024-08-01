@@ -69,7 +69,6 @@ import numpy as np
 import qutip
 import scipy
 import threadpoolctl
-from packaging.version import parse as parse_version
 from qutip.core.superoperator import stack_columns, unstack_columns
 
 
